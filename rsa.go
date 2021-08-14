@@ -36,7 +36,7 @@ func (r rsaMethods) PrivateKeyToPKCS1PEM(privateKey *rsa.PrivateKey) (pemBytes [
 	var privateKeyBytes []byte
 	privateKeyBytes = x509.MarshalPKCS1PrivateKey(privateKey)
 	privateKeyBlock := &pem.Block{
-		Type:  "rsaMethods PRIVATE KEY",
+		Type:  "RSA PRIVATE KEY",
 		Bytes: privateKeyBytes,
 	}
 	var b bytes.Buffer
@@ -53,7 +53,7 @@ func (r rsaMethods) PublicKeyToPKCS1PEM(publicKey *rsa.PublicKey) (pemBytes []by
 	var publicKeyBytes []byte
 	publicKeyBytes = x509.MarshalPKCS1PublicKey(publicKey)
 	publicKeyBlock := &pem.Block{
-		Type:  "rsaMethods PUBLIC KEY",
+		Type:  "RSA PUBLIC KEY",
 		Bytes: publicKeyBytes,
 	}
 	var b bytes.Buffer
@@ -73,7 +73,7 @@ func (r rsaMethods) PublicKeyToPKIXPEM(publicKey *rsa.PublicKey) (pemBytes []byt
 		return
 	}
 	publicKeyBlock := &pem.Block{
-		Type:  "rsaMethods PUBLIC KEY",
+		Type:  "RSA PUBLIC KEY",
 		Bytes: publicKeyBytes,
 	}
 	var b bytes.Buffer
