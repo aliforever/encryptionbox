@@ -16,11 +16,28 @@ func (a aesMethods) EncryptCbcPkcs5WithPadding(key, iv, data []byte) (encryptedD
 		return
 	}
 
-	if len(iv) == 0 {
-		iv, err = EncryptionBox{}.KeyGenerate16Bytes()
-		if err != nil {
-			return
-		}
+	cbc := cipher.NewCBCEncrypter(block, iv)
+
+	data = EncryptionBox{}.PadDataPkcs5(data, block.BlockSize())
+
+	cbc.CryptBlocks(data, data)
+
+	encryptedData = data
+
+	return
+}
+
+func (a aesMethods) EncryptCbcPkcs5RandomIvWithPadding(key, data []byte) (encryptedData, iv []byte, err error) {
+	var block cipher.Block
+
+	block, err = aes.NewCipher(key)
+	if err != nil {
+		return
+	}
+
+	iv, err = EncryptionBox{}.KeyGenerate16Bytes()
+	if err != nil {
+		return
 	}
 
 	cbc := cipher.NewCBCEncrypter(block, iv)
