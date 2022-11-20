@@ -8,12 +8,10 @@ import (
 type aesMethods struct {
 }
 
-func (a aesMethods) EncryptCbcPkcs5WithPadding(key, iv, data []byte) (encryptedData []byte, err error) {
-	var block cipher.Block
-
-	block, err = aes.NewCipher(key)
+func (a aesMethods) EncryptCbcPkcs5WithPadding(key, iv, data []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	cbc := cipher.NewCBCEncrypter(block, iv)
@@ -22,9 +20,7 @@ func (a aesMethods) EncryptCbcPkcs5WithPadding(key, iv, data []byte) (encryptedD
 
 	cbc.CryptBlocks(data, data)
 
-	encryptedData = data
-
-	return
+	return data, nil
 }
 
 func (a aesMethods) EncryptCbcPkcs5RandomIvWithPadding(key, data []byte) (encryptedData, iv []byte, err error) {
@@ -32,12 +28,12 @@ func (a aesMethods) EncryptCbcPkcs5RandomIvWithPadding(key, data []byte) (encryp
 
 	block, err = aes.NewCipher(key)
 	if err != nil {
-		return
+		return nil, nil, err
 	}
 
 	iv, err = EncryptionBox{}.KeyGenerate16Bytes()
 	if err != nil {
-		return
+		return nil, nil, err
 	}
 
 	cbc := cipher.NewCBCEncrypter(block, iv)
@@ -54,66 +50,71 @@ func (a aesMethods) EncryptCbcPkcs5RandomIvWithPadding(key, data []byte) (encryp
 func (a aesMethods) EncryptCbcPkcs5PaddingIvKey16Bytes(data []byte) (key, iv []byte, encryptedData []byte, err error) {
 	key, err = EncryptionBox{}.KeyGenerate16Bytes()
 	if err != nil {
-		return
+		return nil, nil, nil, err
 	}
 
 	iv, err = EncryptionBox{}.KeyGenerate16Bytes()
 	if err != nil {
-		return
+		return nil, nil, nil, err
 	}
 
 	encryptedData, err = a.EncryptCbcPkcs5WithPadding(key, iv, data)
+	if err != nil {
+		return nil, nil, nil, err
+	}
 
-	return
+	return key, iv, encryptedData, nil
 }
 
 func (a aesMethods) EncryptCbcPKCS5PaddingIvKey24Bytes(data []byte) (key, iv []byte, encryptedData []byte, err error) {
 	key, err = EncryptionBox{}.KeyGenerate24Bytes()
 	if err != nil {
-		return
+		return nil, nil, nil, err
 	}
 
 	iv, err = EncryptionBox{}.KeyGenerate16Bytes()
 	if err != nil {
-		return
+		return nil, nil, nil, err
 	}
 
 	encryptedData, err = a.EncryptCbcPkcs5WithPadding(key, iv, data)
+	if err != nil {
+		return nil, nil, nil, err
+	}
 
-	return
+	return key, iv, encryptedData, nil
 }
 
 func (a aesMethods) EncryptCbcPkcs5PaddingIvKey32Bytes(data []byte) (key, iv []byte, encryptedData []byte, err error) {
 	key, err = EncryptionBox{}.KeyGenerate32Bytes()
 	if err != nil {
-		return
+		return nil, nil, nil, err
 	}
 
 	iv, err = EncryptionBox{}.KeyGenerate16Bytes()
 	if err != nil {
-		return
+		return nil, nil, nil, err
 	}
 
 	encryptedData, err = a.EncryptCbcPkcs5WithPadding(key, iv, data)
+	if err != nil {
+		return nil, nil, nil, err
+	}
 
-	return
+	return key, iv, encryptedData, nil
 }
 
-func (a aesMethods) DecryptCbcPkcs5Padding(key, iv, encryptedData []byte) (decryptedData []byte, err error) {
-	var block cipher.Block
-
-	block, err = aes.NewCipher(key)
+func (a aesMethods) DecryptCbcPkcs5Padding(key, iv, encryptedData []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	cbc := cipher.NewCBCDecrypter(block, iv)
 
-	decryptedData = make([]byte, len(encryptedData))
+	decryptedData := make([]byte, len(encryptedData))
 
 	cbc.CryptBlocks(decryptedData, encryptedData)
 
-	decryptedData = EncryptionBox{}.TrimDataPkcs5(decryptedData)
-
-	return
+	return EncryptionBox{}.TrimDataPkcs5(decryptedData), nil
 }
