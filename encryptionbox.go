@@ -28,13 +28,13 @@ func (eb EncryptionBox) KeyGenerate32Bytes() (key []byte, err error) {
 	return
 }
 
-func (eb EncryptionBox) PadDataPKCS5(data []byte, blockSize int) (paddedData []byte) {
+func (eb EncryptionBox) PadDataPkcs5(data []byte, blockSize int) (paddedData []byte) {
 	padding := blockSize - len(data)%blockSize
 	paddedData = append(data, bytes.Repeat([]byte{byte(padding)}, padding)...)
 	return
 }
 
-func (eb EncryptionBox) TrimDataPKCS5(paddedData []byte) (data []byte) {
+func (eb EncryptionBox) TrimDataPkcs5(paddedData []byte) (data []byte) {
 	padding := paddedData[len(paddedData)-1]
 	data = paddedData[:len(paddedData)-int(padding)]
 	return
